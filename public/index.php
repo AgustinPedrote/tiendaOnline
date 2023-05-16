@@ -19,26 +19,49 @@
     $pdo = conectar();
     $sent = $pdo->query("SELECT * FROM articulos ORDER BY codigo");
     ?>
+
     <div class="container mx-auto">
         <?php require '../src/_menu.php' ?>
         <?php require '../src/_alerts.php' ?>
+
+        <!-- Tarjetas artículos -->
         <div class="flex">
             <main class="flex-1 grid grid-cols-3 gap-4 justify-center justify-items-center">
                 <?php foreach ($sent as $fila) : ?>
                     <div class="p-6 max-w-xs min-w-full bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
-                        <a href="#">
-                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"><?= hh($fila['descripcion']) ?></h5>
-                        </a>
-                        <p class="mb-3 font-normal text-gray-700 dark:text-gray-400"><?= hh($fila['descripcion']) ?></p>
+                        <p class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                            <?= hh($fila['descripcion']) ?>
+                        </p>
+                        <!-- Descuento -->
+                        <!-- Descripcion y Precio CON Descuento aplicado -->
+                        <?php if (isset($fila['descuento']) && $fila['descuento'] != '' && $fila['descuento'] > 0) : ?>
+                            <!-- Descuento = (Precio * Descuento) / 100 -->
+                            <p class="mb-2 text-2xl font-bold tracking-tight text-red-700 dark:text-red">
+                                desde <?= dinero(hh($fila['precio']) - hh(($fila['precio'] * $fila['descuento']) / 100)) ?>
+                            </p>
+                            <span class="mb-3 font-normal text-black-700 dark:text-black-400 line-through">
+                                <?= hh($fila['precio']) ?> €
+                            </span>
+                            <span class="mb-3 font-normal text-red-700 dark:text-red-400">
+                                - <?= hh($fila['descuento']) ?>%
+                            </span>
+                            <!-- Descripcion y Precio SIN Descuento aplicado -->
+                        <?php else : ?>
+                            <p class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                                <?= hh(dinero($fila['precio'])) ?>
+                            </p>
+                        <?php endif ?>
+
+                        <!-- Stock -->
                         <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Existencias: <?= hh($fila['stock']) ?></p>
-                        <?php if ($fila['stock'] > 0): ?>
+                        <?php if ($fila['stock'] > 0) : ?>
                             <a href="/insertar_en_carrito.php?id=<?= $fila['id'] ?>" class="inline-flex items-center py-2 px-3.5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                 Añadir al carrito
                                 <svg aria-hidden="true" class="ml-3 -mr-1 w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
                                 </svg>
                             </a>
-                        <?php else: ?>
+                        <?php else : ?>
                             <a class="inline-flex items-center py-2 px-3.5 text-sm font-medium text-center text-white bg-gray-700 rounded-lg hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800">
                                 Sin existencias
                             </a>
@@ -56,7 +79,7 @@
                                 <th scope="col" class="py-3 px-6">Cantidad</th>
                             </thead>
                             <tbody>
-                                <?php foreach ($carrito->getLineas() as $id => $linea): ?>
+                                <?php foreach ($carrito->getLineas() as $id => $linea) : ?>
                                     <?php
                                     $articulo = $linea->getArticulo();
                                     $cantidad = $linea->getCantidad();
