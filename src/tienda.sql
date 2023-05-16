@@ -41,10 +41,10 @@ INSERT INTO articulos (codigo, descripcion, precio, stock, descuento)
     VALUES ('18273892389', 'Yogur piña', 200.50, 40, 50),
            ('83745828273', 'Tigretón', 50.10, 2, 0),
            ('51736128495', 'Disco duro SSD 500 GB', 150.30, 0, 0),
-           ('83746828273', 'Tigretón', 50.10, 3, 25),
-           ('51786128435', 'Disco duro SSD 500 GB', 150.30, 5, 0),
-           ('83745228673', 'Tigretón', 50.10, 80, 0),
-           ('51786198495', 'Disco duro SSD 500 GB', 150.30, 1, 0);
+           ('83746828273', 'Bollicao', 80.10, 3, 25),
+           ('51786128435', 'Bolígrafo', 10.30, 5, 0),
+           ('83745228673', 'Ordenador', 550.10, 80, 0),
+           ('51786198495', 'Alfombrilla', 5.30, 1, 0);
 
 INSERT INTO usuarios (usuario, password, validado)
     VALUES ('admin', crypt('admin', gen_salt('bf', 10)), true),

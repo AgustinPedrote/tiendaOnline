@@ -14,15 +14,84 @@
     <?php
     require '../vendor/autoload.php';
 
+    //Consulta inicial.
+    $pdo = conectar();
+    $sent = $pdo->query("SELECT *
+                           FROM articulos 
+                       ORDER BY descripcion");
+
+    //Variables.
     $carrito = unserialize(carrito());
 
-    $pdo = conectar();
-    $sent = $pdo->query("SELECT * FROM articulos ORDER BY codigo");
+    $nombre = obtener_get('nombre');
+    $precio_min = obtener_get('precio_min');
+    $precio_max = obtener_get('precio_max');
+
+    $where = [];
+    $execute = [];
+
+    //Si se ha introducido algun nombre, precio mín o max.
+    if (isset($nombre) && $nombre != '') {
+        $where[] = 'lower(descripcion) LIKE lower(:nombre)';
+        $execute[':nombre'] = "%$nombre%";
+    }
+    if (isset($precio_min) && $precio_min != '' && is_numeric($precio_min)) {
+        $where[] = 'precio >= :precio_min';
+        $execute[':precio_min'] = $precio_min;
+    }
+    if (isset($precio_max) && $precio_max != '' && is_numeric($precio_max)) {
+        $where[] = 'precio <= :precio_max ';
+        $execute[':precio_max'] = $precio_max;
+    }
+
+    //Consulta si se ha introducido nombre o precio min o max.
+    if (
+        isset($precio_max) && $precio_max != '' && is_numeric($precio_max) or
+        isset($precio_min) && $precio_min != '' && is_numeric($precio_min) or
+        isset($nombre) && $nombre != ''
+    ) {
+        $where = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
+        $sent = $pdo->prepare("SELECT *
+                                 FROM articulos  
+                                 $where
+                                 ORDER BY descripcion");
+        $sent->execute($execute);
+    }
     ?>
 
     <div class="container mx-auto">
         <?php require '../src/_menu.php' ?>
         <?php require '../src/_alerts.php' ?>
+
+        <!-- Buscadores -->
+        <div class="container mx-4">
+            <form action="" method="get">
+                <fieldset>
+                    <legend> <b>Criterios de búsqueda</b> </legend>
+                    <div class="flex mb-3 font-normal text-gray-700 dark:text-gray-400">
+                        <label class="block mb-2 text-sm font-medium w-1/4 pr-4">
+                            Nombre del artículo:
+                            <input type="text" name="nombre" value="<?= $nombre ?>" class="border text-sm rounded-lg w-full p-1.5">
+                        </label>
+
+                        <label class="block mb-2 text-sm font-medium w-1/4 pr-4">
+                            Precio mínimo:
+                            <input type="text" name="precio_min" value="<?= $precio_min ?>" class="border text-sm rounded-lg w-full p-1.5">
+                        </label>
+
+                        <label class="block mb-2 text-sm font-medium w-1/4 pr-4">
+                            Precio máximo:
+                            <input type="text" name="precio_max" value="<?= $precio_max ?>" class="border text-sm rounded-lg w-full p-1.5">
+                        </label>
+                    </div>
+                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                        Buscar
+                    </button>
+                </fieldset>
+            </form>
+        </div>
+
+        <br>
 
         <!-- Tarjetas artículos -->
         <div class="flex">
