@@ -18,6 +18,7 @@
     $pdo = conectar();
 
     //Recoge los datos del panel de administrador.
+    //GET -> Para solicitar y obtener datos.
     $id = obtener_get('id');
     $codigo = obtener_get('codigo');
     $descripcion = obtener_get('descripcion');
@@ -26,6 +27,7 @@
     $stock = obtener_get('stock');
 
     //Recoge los nuevos datos del panel de editar.
+    //POST -> Para realizar modificaciones en la base de datos.
     $codigo2 = obtener_post('codigo2');
     $descripcion2 = obtener_post('descripcion2');
     $precio2 = obtener_post('precio2');

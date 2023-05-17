@@ -64,7 +64,7 @@
         <?php require '../src/_alerts.php' ?>
 
         <!-- Buscadores -->
-        <div class="container mx-4">
+        <div class="container mx-4 ml-6">
             <form action="" method="get">
                 <fieldset>
                     <legend> <b>Criterios de búsqueda</b> </legend>
@@ -94,7 +94,7 @@
         <br>
 
         <!-- Tarjetas artículos -->
-        <div class="flex">
+        <div class="flex ml-6">
             <main class="flex-1 grid grid-cols-3 gap-4 justify-center justify-items-center">
                 <?php foreach ($sent as $fila) : ?>
                     <div class="p-6 max-w-xs min-w-full bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
