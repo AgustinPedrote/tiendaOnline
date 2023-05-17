@@ -31,39 +31,75 @@
     }
 
     $pdo = conectar();
+
     $sent = $pdo->query("SELECT * FROM articulos ORDER BY codigo");
     ?>
+
     <div class="container mx-auto">
         <?php require '../../src/_menu.php' ?>
         <?php require '../../src/_alerts.php' ?>
+
         <div class="overflow-x-auto relative mt-4">
+            <!-- Botón de usuarios -->
+            <div class="ml-2 mt-10 mb-4">
+                <a href="usuarios.php">
+                    <button class="focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
+                        Usuarios
+                    </button>
+                </a>
+            </div>
+
+            <!-- Tabla de artículos -->
             <table class="mx-auto text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <th scope="col" class="py-3 px-6">Código</th>
                     <th scope="col" class="py-3 px-6">Descripción</th>
                     <th scope="col" class="py-3 px-6">Precio</th>
+                    <th scope="col" class="py-3 px-6">Descuento</th>
+                    <th scope="col" class="py-3 px-6">Stock</th>
                     <th scope="col" class="py-3 px-6 text-center">Acciones</th>
                 </thead>
+
                 <tbody>
                     <?php foreach ($sent as $fila) : ?>
                         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                             <td class="py-4 px-6"><?= hh($fila['codigo']) ?></td>
                             <td class="py-4 px-6"><?= hh($fila['descripcion']) ?></td>
-                            <td class="py-4 px-6"><?= hh($fila['precio']) ?></td>
+                            <td class="py-4 px-6"><?= dinero(hh($fila['precio'])) ?></td>
+                            <td class="py-4 px-6"><?= hh($fila['descuento']) ?></td>
+                            <td class="py-4 px-6"><?= hh($fila['stock']) ?></td>
+                            <!-- Acciones -->
                             <td class="px-6 text-center">
                                 <?php $fila_id = hh($fila['id']) ?>
-                                <a href="/admin/editar.php?id=<?= $fila_id ?>"><button class="focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">Editar</button></a>
+                                <a href="/admin/editar.php?id=<?= $fila_id ?>&codigo=<?= hh($fila['codigo']) ?>&descripcion=<?=  hh($fila['descripcion']) ?>&precio=<?= hh($fila['precio']) ?>&descuento=<?= hh($fila['descuento']) ?>&stock=<?= hh($fila['stock']) ?>" 
+                                   class="focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
+                                    Editar
+                                </a>
                                 <form action="/admin/borrar.php" method="POST" class="inline">
                                     <input type="hidden" name="id" value="<?= $fila_id ?>">
-                                    <button type="submit" onclick="cambiar(event, <?= $fila_id ?>)" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900" data-modal-toggle="popup-modal">Borrar</button>
+                                    <button type="submit" onclick="cambiar(event, <?= $fila_id ?>)" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900" data-modal-toggle="popup-modal">
+                                        Borrar
+                                    </button>
                                 </form>
                             </td>
                         </tr>
                     <?php endforeach ?>
                 </tbody>
+
+                <tfoot>
+                    <!-- Botón de insertar artículo -->
+                    <td colspan="5"></td>
+                    <td class="ml-8 py-4 px-6 flex">
+                        <a href="insertar.php" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                            Insertar
+                        </a>
+                    </td>
+                </tfoot>
             </table>
         </div>
     </div>
+
+    <!-- Ventana emergente para borrar. -->
     <div id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 md:inset-0 h-modal md:h-full">
         <div class="relative p-4 w-full max-w-md h-full md:h-auto">
             <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">

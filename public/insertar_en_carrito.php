@@ -29,6 +29,10 @@ try {
     $_SESSION['carrito'] = serialize($carrito);
 } catch (ValueError $e) {
     // TODO: mostrar mensaje de error en un Alert
+
+    /* Catch (\Throwable $th) captura cualquier tipo de excepción, 
+    incluyendo ValueError, mientras que catch (ValueError $e) captura solo 
+    excepciones específicas de tipo ValueError y sus subclases. */
 }
 
 volver();
