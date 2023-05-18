@@ -35,6 +35,11 @@ function volver()
     header('Location: /index.php');
 }
 
+function volver_perfil()
+{
+    header('Location: /perfil.php');
+}
+
 function carrito()
 {
     if (!isset($_SESSION['carrito'])) {

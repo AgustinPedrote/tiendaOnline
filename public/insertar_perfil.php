@@ -40,7 +40,6 @@ if (isset($telefono) && $telefono != '') { if (!preg_match("/^\d{9}$/", $telefon
     $execute[':telefono'] = $telefono;
 } 
 
-
 // Conecta con la base de datos
 $pdo = conectar();
 
@@ -55,4 +54,4 @@ $sent->execute($execute);
 $_SESSION['exito'] = 'El perfil del usuario se ha añadido correctamente.';
 
 
-return (volver());
+return (volver_perfil());

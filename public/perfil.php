@@ -34,15 +34,32 @@
 
         <div class="overflow-x-auto relative mt-10">
             <table class="mx-auto text-sm text-left text-gray-500 dark:text-gray-400">
-                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <thead>
+                    <td>
+                        <a href="editar_password.php">
+                            <button class="mb-2 focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
+                                Editar password
+                            </button>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="dashboard.php">
+                            <button class="mb-2 focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
+                                Dashboard
+                            </button>
+                        </a>
+                    </td>
+                    <td colspan="4"></td>
+                </thead>
+                <tbody class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <th scope="col" class="py-3 px-6">Usuario</th>
                     <th scope="col" class="py-3 px-6">Nombre</th>
                     <th scope="col" class="py-3 px-6">Apellidos</th>
                     <th scope="col" class="py-3 px-6">Email</th>
                     <th scope="col" class="py-3 px-6">Teléfono</th>
                     <th scope="col" class="py-3 px-6">Acciones</th>
-                </thead>
-                <tbody>
+                </tbody>
+                <tfoot>
                     <?php foreach ($sent as $fila) : ?>
                         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                             <td class="py-4 px-6"><?= hh($fila['usuario']) ?></td>
@@ -50,25 +67,15 @@
                             <td class="py-4 px-6"><?= hh($fila['apellidos']) ?></td>
                             <td class="py-4 px-6"><?= hh($fila['email']) ?></td>
                             <td class="py-4 px-6"><?= hh($fila['telefono']) ?></td>
-                            <td class="py-4 px-2">
+                            <td class="px-6 text-center">
                                 <a href="datos_perfil.php">
                                     <button class="focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
-                                        Datos Perfil
+                                        Datos perfil
                                     </button>
                                 </a>
                             </td>
                         </tr>
                     <?php endforeach ?>
-                </tbody>
-                <tfoot>
-                    <td colspan="5"></td>
-                    <td class="py-4 px-2">
-                        <a href="cambiar_password.php">
-                            <button class="focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
-                                Editar password
-                            </button>
-                        </a>
-                    </td>
                 </tfoot>
             </table>
         </div>
