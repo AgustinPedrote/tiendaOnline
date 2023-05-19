@@ -104,9 +104,11 @@
                         <!-- Descuento -->
                         <!-- Descripcion y Precio CON Descuento aplicado -->
                         <?php if (isset($fila['descuento']) && $fila['descuento'] != '' && $fila['descuento'] > 0) : ?>
-                            <!-- Descuento = (Precio * Descuento) / 100 -->
+                            <!-- Descuento = precio - (precio * descuento) / 100 -->
+                            <?= $descuento = $fila['precio'] - ($fila['precio'] * $fila['descuento']) / 100 ?>
+
                             <p class="mb-2 text-2xl font-bold tracking-tight text-red-700 dark:text-red">
-                                desde <?= dinero(hh($fila['precio']) - hh(($fila['precio'] * $fila['descuento']) / 100)) ?>
+                                desde <?= dinero(hh($descuento)) ?>
                             </p>
                             <span class="mb-3 font-normal text-black-700 dark:text-black-400 line-through">
                                 <?= hh($fila['precio']) ?> €
