@@ -34,9 +34,10 @@ foreach ($factura->getLineas($pdo) as $linea) {
     $articulo = $linea->getArticulo();
     $codigo = $articulo->getCodigo();
     $descripcion = $articulo->getDescripcion();
+    $descuento = $articulo->getDescuento();
     $cantidad = $linea->getCantidad();
     $precio = $articulo->getPrecio();
-    $importe = $cantidad * $precio;
+    $importe = $cantidad * ($precio - ($precio * $descuento) / 100);
     $total += $importe;
     $precio = dinero($precio);
     $importe = dinero($importe);
@@ -47,6 +48,7 @@ foreach ($factura->getLineas($pdo) as $linea) {
             <td>$descripcion</td>
             <td>$cantidad</td>
             <td>$precio</td>
+            <td>$descuento%</th>
             <td>$importe</td>
         </tr>
     EOF;
@@ -63,6 +65,7 @@ $res = <<<EOT
         <th>Descripción</th>
         <th>Cantidad</th>
         <th>Precio</th>
+        <th>Descuento</th>
         <th>Importe</th>
     </tr>
     <tbody>

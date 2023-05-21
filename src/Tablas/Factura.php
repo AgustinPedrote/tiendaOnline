@@ -41,7 +41,7 @@ class Factura extends Modelo
         $pdo = $pdo ?? conectar();
 
         if (!isset($this->total)) {
-            $sent = $pdo->prepare('SELECT SUM(cantidad * (precio - (precio * descuento) / 100)) AS total
+            $sent = $pdo->prepare('SELECT SUM(l.cantidad * (precio - (a.precio * a.descuento) / 100)) AS total
                                      FROM articulos_facturas l
                                      JOIN articulos a
                                        ON l.articulo_id = a.id

@@ -22,6 +22,7 @@ use App\Tablas\Usuario;
         return redirigir_login();
     }
 
+    /* Todos los datos de factura mas el total. */
     $facturas = Factura::todosConTotal(
         ['usuario_id = :usuario_id'],               //array $where = []
         [':usuario_id' => Usuario::logueado()->id]  //array $execute = []
@@ -52,7 +53,7 @@ use App\Tablas\Usuario;
                             </td>
                             <!-- Total -->
                             <td class="py-4 px-6">
-                                <?= hh(dinero($factura->getTotal())) ?>
+                                <?= hh(dinero($factura->getTotal())) ?> <!--Total de la factura-->
                             </td>
                             <!-- Factura -->
                             <td class="px-6 text-center">
