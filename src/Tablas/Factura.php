@@ -75,6 +75,10 @@ class Factura extends Modelo
         $sent->execute($execute);
         $filas = $sent->fetchAll(PDO::FETCH_ASSOC);
         $res = [];
+
+        /*En cada iteración del bucle foreach, se crea un nuevo objeto de la misma clase en la que
+         se encuentra el código, utilizando la fila actual obtenida de la base de datos como 
+         argumento para inicializarlo.*/
         foreach ($filas as $fila) {
             $res[] = new static($fila);
         }
