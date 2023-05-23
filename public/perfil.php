@@ -14,7 +14,7 @@
     <?php
     require '../vendor/autoload.php';
 
-    if (!($usuario = \App\Tablas\Usuario::esta_logueado())) {
+    if (!(\App\Tablas\Usuario::esta_logueado())) {
         return redirigir_login();
     }
 
@@ -36,16 +36,16 @@
             <table class="mx-auto text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead>
                     <td>
-                        <a href="editar_password.php">
+                        <a href="dashboard.php">
                             <button class="mb-2 focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
-                                Editar password
+                                Facturas
                             </button>
                         </a>
                     </td>
                     <td>
-                        <a href="dashboard.php">
+                        <a href="comentarios.php">
                             <button class="mb-2 focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
-                                Dashboard
+                                Comentarios
                             </button>
                         </a>
                     </td>
@@ -57,7 +57,7 @@
                     <th scope="col" class="py-3 px-6">Apellidos</th>
                     <th scope="col" class="py-3 px-6">Email</th>
                     <th scope="col" class="py-3 px-6">Teléfono</th>
-                    <th scope="col" class="py-3 px-6">Acciones</th>
+                    <th scope="col" class="py-3 px-6 text-center">Acciones</th>
                 </tbody>
                 <tfoot>
                     <?php foreach ($sent as $fila) : ?>
@@ -69,8 +69,13 @@
                             <td class="py-4 px-6"><?= hh($fila['telefono']) ?></td>
                             <td class="px-6 text-center">
                                 <a href="datos_perfil.php">
-                                    <button class="focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">
+                                    <button class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 mr-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">
                                         Datos perfil
+                                    </button>
+                                </a>
+                                <a href="editar_password.php">
+                                    <button class="mb-2 focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 mr-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">
+                                        Cambiar contraseña
                                     </button>
                                 </a>
                             </td>

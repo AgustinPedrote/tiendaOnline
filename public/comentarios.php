@@ -11,8 +11,24 @@
 </head>
 
 <body>
-    <?php require '../vendor/autoload.php';
-    
+    <?php
+    require '../vendor/autoload.php';
+
+    if (!(\App\Tablas\Usuario::esta_logueado())) {
+        return redirigir_login();
+    }
+
+    $usuario = (\App\Tablas\Usuario::logueado()->usuario);
+
+    $pdo = conectar();
+
+    $sent = $pdo->prepare("SELECT art.*, usuarios.usuario, com.comentario 
+                           FROM articulos art 
+                           LEFT JOIN comentarios com ON (art.id = com.articulo_id) 
+                           JOIN usuarios ON (usuarios.id = com.usuario_id)
+                           WHERE usuarios.usuario = :usuario ");
+
+    $sent->execute([':usuario' => $usuario]);
     ?>
 
     <div class="container mx-auto">
@@ -25,14 +41,12 @@
             <table class="mx-auto text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <th scope="col" class="py-3 px-6">Artículo</th>
-                    <th scope="col" class="py-3 px-6">Usuario</th>
                     <th scope="col" class="py-3 px-6">Comentario</th>
                 </thead>
                 <tbody>
                     <?php foreach ($sent as $fila) : ?>
                         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                             <td class="py-4 px-6"><?= $fila['descripcion'] ?></td>
-                            <td class="py-4 px-6"><?= $fila['usuario'] ?></td>
                             <td class="py-4 px-6"><?= $fila['comentario'] ? $fila['comentario'] : '' ?></td>
                         </tr>
                     <?php endforeach ?>
