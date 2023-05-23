@@ -39,7 +39,7 @@
     ?>
 
     <div class="container mx-auto">
-        <form action="insertar_perfil.php" method="POST" class="mt-5 mr-96 ml-96">
+        <form action="perfil_insertar.php" method="POST" class="mt-5 mr-96 ml-96">
             <div class="mb-6">
                 <label for="usuario" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                     Usuario

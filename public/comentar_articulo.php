@@ -14,6 +14,11 @@
 
     <?php
     require '../vendor/autoload.php';
+    require '../src/_alerts.php';
+
+    if (!(\App\Tablas\Usuario::esta_logueado())) {
+        return redirigir_login();
+    }
 
     //Desde index
     $articulo_id = obtener_get('id');
@@ -33,11 +38,14 @@
             $sent = $pdo->prepare("UPDATE comentarios SET comentario = :comentario WHERE usuario_id = :usuario_id AND articulo_id = :articulo_id");
             $sent->execute(['comentario' => $comentario, 'usuario_id' => $usuario_id, 'articulo_id' => $articulo_id]);
 
+            $_SESSION['exito'] = 'El comentario se ha creado correctamente.';
             volver();
         } else {
             // Si el usuario no ha comentado todavía, insertar su comentario en la tabla de comentario
             $sent = $pdo->prepare("INSERT INTO comentarios (comentario, usuario_id, articulo_id) VALUES (:comentario, :usuario_id, :articulo_id)");
             $sent->execute(['comentario' => $comentario, 'usuario_id' => $usuario_id, 'articulo_id' => $articulo_id]);
+
+            $_SESSION['exito'] = 'El comentario se ha creado correctamente.';
             volver();
         }
     }
@@ -46,9 +54,7 @@
     <div class="container mx-auto">
         <?php
         require '../src/_menu.php';
-        require '../src/_alerts.php';
         ?>
-
 
         <form class="mt-10 mr-96 ml-96" action="" method="POST">
             <div class="mb-6">
