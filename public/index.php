@@ -100,9 +100,9 @@
                     <div class="p-6 max-w-xs min-w-full bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
 
                         <!-- Descripción y link a comentarios -->
-                        <a href="/comentarios.php?id=<?= $fila['id'] ?>" class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                        <p class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                             <?= hh($fila['descripcion']) ?>
-                        </a>
+                        </p>
 
                         <!-- Descripcion y Precio CON Descuento aplicado -->
                         <?php if (isset($fila['descuento']) && $fila['descuento'] != '' && $fila['descuento'] > 0) : ?>
@@ -117,7 +117,7 @@
                                 - <?= hh($fila['descuento']) ?>%
                             </span>
 
-                        <!-- Descripcion y Precio SIN Descuento aplicado -->
+                            <!-- Descripcion y Precio SIN Descuento aplicado -->
                         <?php else : ?>
                             <p class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                                 <?= hh(dinero($fila['precio'])) ?>
@@ -139,16 +139,36 @@
                             </a>
                         <?php endif ?>
 
+                        <br>
+
                         <!-- Comentarios -->
                         <?php
                         //Los comentarios solo son para usuarios logueados.
                         $usuario = \App\Tablas\Usuario::logueado();
                         $usuario_id = $usuario ? $usuario->id : null;
+                        
+                        //Buscar el total de cada artículo.
+                        $sent2 = $pdo->prepare("SELECT COUNT(com.comentario) AS comentarios
+                                                FROM articulos art 
+                                                JOIN comentarios com ON (art.id = com.articulo_id) 
+                                                WHERE art.id = :id");
+
+                        $sent2->execute([':id' => hh($fila['id'])]);
                         ?>
 
-                        <a href="/comentar_articulo.php?id=<?= $fila['id'] ?>&usuario=<?= $usuario_id ?>" class="inline-flex items-center py-2 px-3.5 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                        <!-- Botón para comentar -->
+                        <a href="/comentar_articulo.php?id=<?= $fila['id'] ?>&usuario=<?= $usuario_id ?>" class="inline-flex items-center mt-2 py-2 px-3.5 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
                             Comentar
                         </a>
+                        
+                        <br>
+
+                        <!-- Mostrar el total de comentarios en cada artículo. -->
+                        <?php foreach ($sent2 as $fila2) : ?>
+                            <a href="/comentarios.php?id=<?= $fila['id'] ?>" class="inline-flex mt-3">
+                                <?= $fila2['comentarios'] ?> comentarios
+                            </a>
+                        <?php endforeach ?>
                     </div>
                 <?php endforeach ?>
             </main>
