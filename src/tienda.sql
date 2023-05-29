@@ -43,10 +43,11 @@ CREATE TABLE articulos_facturas (
 --Comentarios en los artículos.
 DROP TABLE IF EXISTS comentarios CASCADE;
 CREATE TABLE comentarios (
-    articulo_id bigint  NOT NULL REFERENCES  articulos   (id),
-    usuario_id  bigint  NOT NULL REFERENCES  usuarios    (id),
+    id          bigserial   PRIMARY KEY,
     comentario  varchar(255),
-    PRIMARY KEY (articulo_id, usuario_id)
+    created_at  timestamp   NOT NULL DEFAULT localtimestamp(0),
+    articulo_id bigint      NOT NULL REFERENCES  articulos   (id),
+    usuario_id  bigint      NOT NULL REFERENCES  usuarios    (id)
 );
 
 -- Carga inicial de datos de prueba:
