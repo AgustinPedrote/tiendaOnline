@@ -40,6 +40,11 @@ function volver_perfil()
     header('Location: /perfil.php');
 }
 
+function volver_comentarios()
+{
+    header('Location: /comentarios_usuario.php/');
+}
+
 function carrito()
 {
     if (!isset($_SESSION['carrito'])) {
