@@ -46,10 +46,17 @@
                     <th scope="col" class="py-3 px-6">Comentario</th>
                 </thead>
                 <tbody>
-                    <?php foreach ($sent as $fila) : ?>                   
+                    <?php foreach ($sent as $fila) : ?>
+                        <?php
+                        //Separar fecha y hora.
+                        $fecha = explode(' ', $fila['created_at']);
+                        //Formateo a fecha europea.
+                        $fecha_formateada = date("d-m-Y", strtotime($fecha[0]));
+                        ?>
+
                         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                             <td class="py-4 px-6"><?= $fila['descripcion'] ?></td>
-                            <td class="py-4 px-6"><?= $fila['created_at']  ?></td>
+                            <td class="py-4 px-6"><?= $fecha_formateada ?></td>
                             <td class="py-4 px-6"><?= $fila['comentario'] ? $fila['comentario'] : '' ?></td>
                         </tr>
                     <?php endforeach ?>
