@@ -19,12 +19,20 @@
 
     $carrito = unserialize(carrito());
 
+    // Obtener el array de IDs
+    $ids = $carrito->getIds(); 
+    // Generar una cadena de marcadores de posición dinámicamente según la cantidad de IDs en el array
+    $placeholders = implode(', ', array_fill(0, count($ids), '?'));
+
     if (obtener_post('_testigo') !== null) {
         $pdo = conectar();
-        $sent = $pdo->prepare('SELECT *
-                                 FROM articulos
-                                WHERE id IN (:ids)');
-        $sent->execute([':ids' => implode(', ', $carrito->getIds())]);
+        // Preparar la consulta con los marcadores de posición generados
+        $sent = $pdo->prepare("SELECT *
+                                FROM articulos
+                                WHERE id IN ($placeholders)");
+        // Ejecutar la consulta con los valores de los IDs individualmente
+        $sent->execute($ids);
+
         foreach ($sent->fetchAll(PDO::FETCH_ASSOC) as $fila) {
             if ($fila['stock'] < $carrito->getLinea($fila['id'])->getCantidad()) {
                 $_SESSION['error'] = 'No hay existencias suficientes para crear la factura.';

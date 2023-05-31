@@ -44,7 +44,7 @@
                 <tbody>
                     <?php foreach ($sent as $fila) : ?>
                         <?php
-                        //Separar fecha y hora.
+                        //Separar fecha y hora en un array.
                         $fecha = explode(' ', $fila['created_at']);
                         //Formateo a fecha europea.
                         $fecha_formateada = date("d-m-Y", strtotime($fecha[0]));
