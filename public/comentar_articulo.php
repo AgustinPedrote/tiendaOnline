@@ -28,11 +28,7 @@
 
     $pdo = conectar();
 
-    if (isset($comentario) && $comentario != null or $comentario != '') {
-        // Verificar si el usuario ya ha comentado en la tabla de comentarios
-        $sent = $pdo->prepare("SELECT * FROM comentarios WHERE usuario_id = :usuario_id AND articulo_id = :articulo_id");
-        $sent->execute(['usuario_id' => $usuario_id, 'articulo_id' => $articulo_id]);
-
+    if (isset($comentario) && $comentario != null && $comentario != '') {
         $sent = $pdo->prepare("INSERT INTO comentarios (comentario, usuario_id, articulo_id) VALUES (:comentario, :usuario_id, :articulo_id)");
         $sent->execute(['comentario' => $comentario, 'usuario_id' => $usuario_id, 'articulo_id' => $articulo_id]);
 
@@ -52,8 +48,8 @@
                     Comentar artículo:
                 </label>
 
-                <textarea rows="4" cols="50" name="comentario" class="mb-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
-                </textarea>
+                <input rows="4" cols="50" name="comentario" class="mb-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                </input>
             </div>
 
             <button type="submit" class="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
