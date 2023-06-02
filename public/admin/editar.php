@@ -42,7 +42,7 @@
         && isset($stock2) && $stock2 != ''
     ) {
         try {
-            \App\Tablas\Articulo::modificar($id, $codigo2, $descripcion2, $precio2, $descuento2, $stock, $pdo);
+            \App\Tablas\Articulo::modificar($id, $codigo2, $descripcion2, $precio2, $descuento2, $stock2, $pdo);
             $_SESSION['exito'] = "El articulo se ha modificado correctamente.";
             return volver_admin();
         } catch (\Throwable $th) {
