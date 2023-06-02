@@ -146,7 +146,7 @@
                         //Los comentarios solo son para usuarios logueados.
                         $usuario = \App\Tablas\Usuario::logueado();
                         $usuario_id = $usuario ? $usuario->id : null;
-                        
+
                         //Buscar el total de cada artículo.
                         $sent2 = $pdo->prepare("SELECT COUNT(com.comentario) AS comentarios
                                                 FROM articulos art 
@@ -160,7 +160,7 @@
                         <a href="/comentar_articulo.php?id=<?= $fila['id'] ?>&usuario=<?= $usuario_id ?>" class="inline-flex items-center mt-2 py-2 px-3.5 text-sm font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
                             Comentar
                         </a>
-                        
+
                         <br>
 
                         <!-- Mostrar el total de comentarios en cada artículo. -->
@@ -180,6 +180,7 @@
                             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                                 <th scope="col" class="py-3 px-6">Descripción</th>
                                 <th scope="col" class="py-3 px-6">Cantidad</th>
+                                <th scope="col" class="py-3 px-6"></th>
                             </thead>
                             <tbody>
                                 <?php foreach ($carrito->getLineas() as $id => $linea) : ?>
@@ -190,6 +191,12 @@
                                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                                         <td class="py-4 px-6"><?= $articulo->getDescripcion() ?></td>
                                         <td class="py-4 px-6 text-center"><?= $cantidad ?></td>
+                                        <!-- Eliminar línea -->
+                                        <td class="py-4 px-6 text-center">
+                                            <a href="/eliminar_linea.php?id=<?= $id ?>" class="m-8">
+                                                <img class="w-8 h-8 rounded-full" src="/img/papelera.svg" alt="user photo">
+                                            </a>
+                                        </td>
                                     </tr>
                                 <?php endforeach ?>
                             </tbody>
