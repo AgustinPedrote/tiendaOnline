@@ -1,4 +1,8 @@
 DROP TABLE IF EXISTS articulos CASCADE;
+DROP TABLE IF EXISTS usuarios CASCADE;
+DROP TABLE IF EXISTS facturas CASCADE;
+DROP TABLE IF EXISTS articulos_facturas CASCADE;
+DROP TABLE IF EXISTS comentarios CASCADE;
 
 CREATE TABLE articulos (
     id          bigserial     PRIMARY KEY,
@@ -8,8 +12,6 @@ CREATE TABLE articulos (
     stock       int           NOT NULL,
     descuento   numeric(3)    DEFAULT 0   CHECK (descuento >= 0 AND descuento <= 100) --Descuento artículos.
 );
-
-DROP TABLE IF EXISTS usuarios CASCADE;
 
 -- Datos para el perfil de usuario.
 CREATE TABLE usuarios (
@@ -23,29 +25,24 @@ CREATE TABLE usuarios (
     validado    bool         NOT NULL
 );
 
-DROP TABLE IF EXISTS facturas CASCADE;
-
 CREATE TABLE facturas (
     id         bigserial  PRIMARY KEY,
     created_at timestamp  NOT NULL DEFAULT localtimestamp(0),
-    usuario_id bigint NOT NULL REFERENCES usuarios (id)
+    usuario_id bigint NOT NULL REFERENCES usuarios (id) ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS articulos_facturas CASCADE;
-
 CREATE TABLE articulos_facturas (
-    articulo_id bigint NOT NULL REFERENCES articulos (id),
-    factura_id  bigint NOT NULL REFERENCES facturas (id),
+    articulo_id bigint NOT NULL REFERENCES articulos (id) ON DELETE CASCADE,
+    factura_id  bigint NOT NULL REFERENCES facturas (id) ON DELETE CASCADE,
     cantidad    int    NOT NULL,
     PRIMARY KEY (articulo_id, factura_id)
 );
 
 --Comentarios en los artículos.
-DROP TABLE IF EXISTS comentarios CASCADE;
 CREATE TABLE comentarios (
     created_at  timestamp   NOT NULL DEFAULT localtimestamp(0),
-    articulo_id bigint      NOT NULL REFERENCES  articulos   (id),
-    usuario_id  bigint      NOT NULL REFERENCES  usuarios    (id),
+    articulo_id bigint      NOT NULL REFERENCES  articulos   (id) ON DELETE CASCADE,
+    usuario_id  bigint      NOT NULL REFERENCES  usuarios    (id) ON DELETE CASCADE,
     comentario  varchar(255),
     PRIMARY KEY (created_at, articulo_id, usuario_id)
 );

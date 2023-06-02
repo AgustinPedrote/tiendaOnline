@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require '../src/auxiliar.php';
+require '../vendor/autoload.php';
 
 $id_art = obtener_post('id_art');
 $id_us = obtener_post('id_us');

@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require '../../src/auxiliar.php';
+require '../../vendor/autoload.php';
 
 $id = obtener_post('id');
 
