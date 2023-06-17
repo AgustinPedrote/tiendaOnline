@@ -24,7 +24,8 @@
         $pdo = conectar();
         $sent = $pdo->prepare('SELECT * FROM cupones WHERE (unaccent(cupon)) = upper(unaccent(:cupon))');
         $sent->execute([':cupon' => $cupon]);
-        $cupon_encontrado = $sent->fetch();
+        $cupon_encontrado = $sent->fetch(PDO::FETCH_ASSOC);
+
         if ($cupon_encontrado) {
             $cupon_id = $cupon_encontrado['id'];
         }
