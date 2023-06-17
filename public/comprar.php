@@ -18,9 +18,20 @@
     }
 
     $carrito = unserialize(carrito());
+    $cupon = obtener_get('cupon');
+
+    if (isset($cupon)) {
+        $pdo = conectar();
+        $sent = $pdo->prepare('SELECT * FROM cupones WHERE (unaccent(cupon)) = upper(unaccent(:cupon))');
+        $sent->execute([':cupon' => $cupon]);
+        $cupon_encontrado = $sent->fetch();
+        if ($cupon_encontrado) {   //Si el cupon se encuentra en la bd, la variable devuelve un array asociativo, en caso contrario, devuelve false.
+            $cupon_id = $cupon_encontrado['id'];
+        }
+    }
 
     // Obtener el array de IDs
-    $ids = $carrito->getIds(); 
+    $ids = $carrito->getIds();
     // Generar una cadena de marcadores de posición dinámicamente según la cantidad de IDs en el array
     $placeholders = implode(', ', array_fill(0, count($ids), '?'));
 
@@ -39,14 +50,16 @@
                 return volver();
             }
         }
+
         // Crear factura
         $usuario = \App\Tablas\Usuario::logueado();
         $usuario_id = $usuario->id;
+
         $pdo->beginTransaction();
-        $sent = $pdo->prepare('INSERT INTO facturas (usuario_id)
-                               VALUES (:usuario_id)
+        $sent = $pdo->prepare('INSERT INTO facturas (usuario_id, cupon_id)
+                               VALUES (:usuario_id, :cupon_id)
                                RETURNING id');
-        $sent->execute([':usuario_id' => $usuario_id]);
+        $sent->execute([':usuario_id' => $usuario_id, ':cupon_id' => $cupon_id]);
         $factura_id = $sent->fetchColumn();
         $lineas = $carrito->getLineas();
         $values = [];
@@ -76,10 +89,32 @@
         unset($_SESSION['carrito']);
         return volver();
     }
+
+    $errores = ['cupon' => []];
+
+    if (isset($cupon)) {
+
+        $encontrado = false;
+
+        $hoy = date('Y-m-d');
+
+        if ($cupon_encontrado['cupon'] === strtoupper($cupon)) {
+            $encontrado = true;
+            if ($cupon_encontrado['fecha_caducidad'] < $hoy) {
+                $errores['cupon'][] = 'El cupón ha caducado.';
+            }
+        }
+        if (!$encontrado) {
+            $errores['cupon'][] = 'No existe ese cupón.';
+        }
+    }
+    $vacio = empty($errores['cupon']);
     ?>
 
     <div class="container mx-auto">
         <?php require '../src/_menu.php' ?>
+        <?php require '../src/_alerts.php' ?>
+
         <div class="overflow-y-auto py-4 px-3 bg-gray-50 rounded dark:bg-gray-800">
             <table class="mx-auto text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -101,6 +136,11 @@
                         $precio = $articulo->getPrecio() - ($articulo->getPrecio() * $articulo->getDescuento()) / 100;
                         $importe = $cantidad * $precio;
                         $total += $importe;
+
+                        if ($vacio && isset($cupon)) {
+                            $descuento = hh($cupon_encontrado['descuento']);
+                            $total_con_descuento = $total - ($total * ($descuento / 100));
+                        }
                         ?>
                         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                             <td class="py-4 px-6"><?= $codigo ?></td>
@@ -116,11 +156,34 @@
                     <?php endforeach ?>
                 </tbody>
                 <tfoot>
-                    <td colspan="3"></td>
-                    <td class="text-center font-semibold">TOTAL:</td>
-                    <td class="text-center font-semibold"><?= dinero($total) ?></td>
+                    <tr>
+                        <td colspan="3"></td>
+                        <td class="text-center font-semibold">TOTAL:</td>
+                        <td class="text-center font-semibold"><?= dinero($total) ?></td>
+                    <tr>
+                        <?php if ($vacio && isset($cupon)) : ?>
+                    <tr>
+                        <td colspan="3"></td>
+                        <td class="text-center font-semibold">TOTAL con descuento:</td>
+                        <td class="text-center font-semibold"><?= dinero($total_con_descuento) ?></td>
+                        <td class="text-center font-semibold"><?= $cupon_encontrado['cupon'] ?></td>
+                    </tr>
+                <?php endif ?>
                 </tfoot>
+
+                <!-- Cuestionario cupones -->
+                <div>
+                    <p>¿Tienes un cupón de descuento?</p>
+                    <form action="" method="GET" class="mx-auto flex mt-4">
+                        <input type="text" name="cupon" value="<?= isset($cupon_encontrado['cupon']) ? $cupon_encontrado['cupon'] : '' ?>" class="border text-sm rounded-lg p-2.5">
+                        <?php foreach ($errores['cupon'] as $err) : ?>
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-500"><span class="font-bold">¡Error!</span> <?= $err ?></p>
+                        <?php endforeach ?>
+                        <button type="submit" class=" focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900">Comprobar</button>
+                    </form>
+                </div>
             </table>
+
             <form action="" method="POST" class="mx-auto flex mt-4">
                 <input type="hidden" name="_testigo" value="1">
                 <button type="submit" href="" class="mx-auto focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">

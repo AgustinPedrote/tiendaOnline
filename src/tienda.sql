@@ -1,7 +1,10 @@
+CREATE EXTENSION unaccent;  -- Ignorar acentos. 
+
 DROP TABLE IF EXISTS articulos CASCADE;
 DROP TABLE IF EXISTS usuarios CASCADE;
 DROP TABLE IF EXISTS facturas CASCADE;
 DROP TABLE IF EXISTS articulos_facturas CASCADE;
+DROP TABLE IF EXISTS cupones CASCADE;
 DROP TABLE IF EXISTS comentarios CASCADE;
 
 CREATE TABLE articulos (
@@ -25,10 +28,20 @@ CREATE TABLE usuarios (
     validado    bool         NOT NULL
 );
 
+--Cupones de descuento.
+CREATE TABLE cupones (
+    id              bigserial       PRIMARY KEY,
+    cupon           varchar(50)     NOT NULL,
+    descuento       numeric(7, 2)   NOT NULL,
+    fecha_caducidad timestamp       NOT NULL
+    
+);
+
 CREATE TABLE facturas (
     id         bigserial  PRIMARY KEY,
     created_at timestamp  NOT NULL DEFAULT localtimestamp(0),
-    usuario_id bigint NOT NULL REFERENCES usuarios (id) ON DELETE CASCADE
+    usuario_id bigint NOT NULL REFERENCES usuarios (id) ON DELETE CASCADE,
+    cupon_id   bigint REFERENCES cupones (id)
 );
 
 CREATE TABLE articulos_facturas (
@@ -61,3 +74,8 @@ INSERT INTO articulos (codigo, descripcion, precio, stock, descuento)
 INSERT INTO usuarios (usuario, password, validado)
     VALUES ('admin', crypt('admin', gen_salt('bf', 10)), true),
            ('pepe', crypt('pepe', gen_salt('bf', 10)), false);
+
+INSERT INTO cupones (cupon, descuento, fecha_caducidad)
+    VALUES ('DESCUENTO25', 25,  '2024-07-01'),
+           ('DESCUENTO50', 50,  '2023-07-01'),
+           ('DESCUENTO75', 75,  '2022-07-01');
