@@ -205,6 +205,7 @@
                         <td class="text-center font-semibold">TOTAL:</td>
                         <td class="text-center font-semibold"><?= dinero($total) ?></td>
                     <tr>
+                        <!-- Si hay cupón de descuento -->
                         <?php if ($vacio && isset($cupon)) : ?>
                     <tr>
                         <td colspan="4"></td>
