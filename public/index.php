@@ -16,9 +16,10 @@
 
     //Consulta inicial.
     $pdo = conectar();
-    $sent = $pdo->query("SELECT *
-                           FROM articulos 
-                       ORDER BY descripcion");
+    $sent = $pdo->query("SELECT a.*, o.oferta
+                         FROM articulos a
+                         LEFT JOIN ofertas o ON (o.id = a.oferta_id) 
+                         ORDER BY descripcion");
 
     //Variables.
     $carrito = unserialize(carrito());
@@ -51,10 +52,11 @@
         isset($nombre) && $nombre != ''
     ) {
         $where = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
-        $sent = $pdo->prepare("SELECT *
-                                 FROM articulos  
-                                 $where
-                                 ORDER BY descripcion");
+        $sent = $pdo->prepare("SELECT a.*, o.oferta
+                               FROM articulos a 
+                               LEFT JOIN ofertas o ON (o.id = a.oferta_id)
+                               $where
+                               ORDER BY descripcion");
         $sent->execute($execute);
     }
     ?>
@@ -98,8 +100,12 @@
             <main class="flex-1 grid grid-cols-3 gap-4 justify-center justify-items-center">
                 <?php foreach ($sent as $fila) : ?>
                     <div class="p-6 max-w-xs min-w-full bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
+                        <!-- Oferta especial -->
+                        <?php if ($fila['oferta'] !== null) : ?>
+                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-red-700 dark:text-red">OFERTA <?= hh($fila['oferta']) ?> </h5>
+                        <?php endif ?>
 
-                        <!-- Descripción y link a comentarios -->
+                        <!-- Descripción -->
                         <p class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                             <?= hh($fila['descripcion']) ?>
                         </p>

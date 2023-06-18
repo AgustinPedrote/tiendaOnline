@@ -134,6 +134,7 @@
                     <th scope="col" class="py-3 px-6">Descripción</th>
                     <th scope="col" class="py-3 px-6">Cantidad</th>
                     <th scope="col" class="py-3 px-6">Precio</th>
+                    <th scope="col" class="py-3 px-6">Descuento</th>
                     <th scope="col" class="py-3 px-6">Importe</th>
                 </thead>
                 <tbody>
@@ -147,7 +148,35 @@
                         //Precio calculado con descuento.
                         $precio = $articulo->getPrecio() - ($articulo->getPrecio() * $articulo->getDescuento()) / 100;
                         $importe = $cantidad * $precio;
-                        $total += $importe;
+
+                        switch ($articulo->getOferta()) {
+                            case '2x1':
+                                if ($cantidad % 2 == 0) {
+                                    $importe = $importe / 2;
+                                    $total += $importe;
+                                    $_SESSION['a'] = $total;
+                                } else {
+                                    $f = ($cantidad - 1);
+                                    $importe = (($f * $precio) / 2) + $precio;
+                                    $total += $importe;
+                                    $_SESSION['a'] = $total;
+                                }
+                                break;
+                            case '50%':
+                                $importe = $importe - ($importe * 0.5);
+                                $total += $importe;
+                                $_SESSION['a'] = $total;
+                                break;
+
+                            case '2ª Unidad a mitad de precio':
+                                $importe = ($precio * $cantidad / 2) + ($cantidad / 2 * $precio / 2);
+                                $total += $importe;
+                                break;
+                            case '':
+                                $total += $importe;
+                                $_SESSION['a'] = $total;
+                                break;
+                        }
 
                         if ($vacio && isset($cupon)) {
                             $descuento = hh($cupon_encontrado['descuento']);
@@ -162,6 +191,9 @@
                                 <?= dinero($precio) ?>
                             </td>
                             <td class="py-4 px-6 text-center">
+                                <?= $articulo->getOferta() ?>
+                            </td>
+                            <td class="py-4 px-6 text-center">
                                 <?= dinero($importe) ?>
                             </td>
                         </tr>
@@ -169,13 +201,13 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="3"></td>
+                        <td colspan="4"></td>
                         <td class="text-center font-semibold">TOTAL:</td>
                         <td class="text-center font-semibold"><?= dinero($total) ?></td>
                     <tr>
                         <?php if ($vacio && isset($cupon)) : ?>
                     <tr>
-                        <td colspan="3"></td>
+                        <td colspan="4"></td>
                         <td class="text-center font-semibold">TOTAL:</td>
                         <td class="text-center font-semibold"><?= dinero($total_con_descuento) ?></td>
                         <td class="text-center font-semibold"><?= $cupon_encontrado['cupon'] ?></td>
