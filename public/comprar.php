@@ -20,6 +20,7 @@
     $carrito = unserialize(carrito());
     $cupon = obtener_get('cupon');
 
+    //Comprobar cupón
     if (isset($cupon)) {
         $pdo = conectar();
         $sent = $pdo->prepare('SELECT * FROM cupones WHERE (unaccent(cupon)) = upper(unaccent(:cupon))');
@@ -31,6 +32,7 @@
         }
     }
 
+    //Realizar pedido
     if (obtener_post('_testigo') !== null) {
         $ids = $carrito->getIds();
         // Generar una cadena de marcadores de posición dinámicamente según la cantidad de IDs en el array
@@ -89,10 +91,9 @@
 
     $errores = ['cupon' => []];
 
+    //Comprobar errores cupón
     if (isset($cupon)) {
-
         $encontrado = false;
-
         $hoy = date('Y-m-d');
 
         if ($cupon_encontrado['cupon'] === strtoupper($cupon)) {
@@ -105,6 +106,7 @@
             $errores['cupon'][] = 'No existe ese cupón.';
         }
     }
+
     $vacio = empty($errores['cupon']);
     ?>
 
@@ -148,7 +150,8 @@
                         //Precio calculado con descuento.
                         $precio = $articulo->getPrecio() - ($articulo->getPrecio() * $articulo->getDescuento()) / 100;
                         $importe = $cantidad * $precio;
-
+                        
+                        //Ofertas especiales
                         switch ($articulo->getOferta()) {
                             case '2x1':
                                 if ($cantidad % 2 == 0) {
@@ -177,11 +180,6 @@
                                 $_SESSION['a'] = $total;
                                 break;
                         }
-
-                        if ($vacio && isset($cupon)) {
-                            $descuento = hh($cupon_encontrado['descuento']);
-                            $total_con_descuento = $total - ($total * ($descuento / 100));
-                        }
                         ?>
                         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                             <td class="py-4 px-6"><?= $codigo ?></td>
@@ -205,8 +203,12 @@
                         <td class="text-center font-semibold">TOTAL:</td>
                         <td class="text-center font-semibold"><?= dinero($total) ?></td>
                     <tr>
-                        <!-- Si hay cupón de descuento -->
-                        <?php if ($vacio && isset($cupon)) : ?>
+                <!-- Si hay cupón de descuento -->
+                <?php if ($vacio && isset($cupon)) : ?>
+                    <?php
+                    $descuento = hh($cupon_encontrado['descuento']);
+                    $total_con_descuento = $total - ($total * ($descuento / 100));
+                    ?>
                     <tr>
                         <td colspan="4"></td>
                         <td class="text-center font-semibold">TOTAL:</td>
